@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provérbio Chinês</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f0e6;
+            background-image: linear-gradient(to bottom right, #f5f0e6, #edd2a4);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1 {
+            color: #d32f2f;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .emoji-container {
+            margin-bottom: 25px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chinese-emoji {
+            font-size: 4rem;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+        }
+        
+        .chinese-emoji.shake {
+            animation: shake 0.6s ease-in-out;
+        }
+        
+        .phrase-container {
+            background: linear-gradient(135deg, #fff9c4, #ffecb3);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffa726;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phrase-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .phrase-container.revealed {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-color: #ff8f00;
+        }
+        
+        #phrase {
+            font-family: 'Georgia', serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #2e2e2e;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            text-align: justify;
+            hyphens: auto;
+        }
+        
+        #phrase.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #generate {
+            background: linear-gradient(135deg, #ff6b6b, #ff5722);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        #generate:hover {
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+        }
+        
+        #generate:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        #generate:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        footer {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            15% { transform: rotate(-15deg) scale(1.1); }
+            30% { transform: rotate(15deg) scale(1.1); }
+            45% { transform: rotate(-10deg) scale(1.05); }
+            60% { transform: rotate(10deg) scale(1.05); }
+            75% { transform: rotate(-5deg) scale(1.02); }
+            90% { transform: rotate(5deg) scale(1.02); }
+        }
+        
+        /* Otimizações para smartphones */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            
+            .chinese-emoji {
+                font-size: 3.5rem;
+            }
+            
+            .phrase-container {
+                padding: 15px;
+                min-height: 100px;
+            }
+            
+            #phrase {
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+            
+            #generate {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            footer {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .chinese-emoji {
+                font-size: 3rem;
+            }
+            
+            #phrase {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Melhorias para toque em dispositivos móveis */
+        @media (hover: none) {
+            .container:hover {
+                transform: none;
+            }
+            
+            #generate:hover {
+                background: linear-gradient(135deg, #ff6b6b, #ff5722);
+                transform: none;
+                box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Provérbio Chinês</h1>
+        
+        <div class="emoji-container">
+            <div class="chinese-emoji" id="chinese-emoji">🏮</div>
+        </div>
+        
+        <div class="phrase-container" id="phrase-container">
+            <p id="phrase">Toque no botão para revelar um provérbio chinês!</p>
+        </div>
+        
+        <button id="generate">Escolha um Provérbio</button>
+    </div>
+    
+    <footer>© 2025 Rodrigo Pereira (FFCLRP/USP)</footer>
+
+    <script>
+        const phrases = [
+            "Como em uma distribuição discreta, a vida também oferece apenas um conjunto limitado de possibilidades; sábio é aquele que as reconhece e escolhe com sabedoria.",
+            "Semelhante à distribuição binomial, o número de sucessos na vida depende não apenas da sorte, mas da quantidade de tentativas que ousamos fazer.",
+            "Como um dado lançado na distribuição discreta, cada resultado na vida é único e traz sua própria significância.",
+            "Na vida, assim como na distribuição de Poisson, eventos podem ocorrer a qualquer momento, independentemente do último acontecimento; é sábio sempre estar preparado.",
+            "A função de probabilidade, na distribuição discreta, nos ensina que em cada decisão que tomamos, existe uma probabilidade de ocorrência. Na vida, cada escolha tem suas consequências, seja elas previstas ou não.",
+            "Como a variável contínua que assume qualquer valor, a vida é um campo de infinitas possibilidades; o sábio sabe que o valor de cada momento é único.",
+            "A função de densidade de probabilidade ensina que a probabilidade se estende como uma sombra sob nossas decisões; devemos escolher com sabedoria, pois cada escolha cria uma nova realidade.",
+            "Na distribuição uniforme contínua da vida, cada momento oferece oportunidades iguais; é a perspicácia do observador que descobre o valor em cada instante.",
+            "A distribuição normal nos lembra que, embora a vida apresente muitos desvios, existe uma ordem subjacente; a sabedoria está em buscar a harmonia no meio do caos.",
+            "Assim como a distribuição gaussiana se equilibra em torno de um ponto central, a vida oscila em torno de um equilíbrio; os sábios mantêm o centro, mesmo quando as circunstâncias balançam.",
+            "A distribuição de Bernoulli é como uma única semente, cujo florescimento resulta em sucesso ou fracasso, enquanto a distribuição binomial é como um jardim inteiro, contendo muitas sementes, cada uma com a chance de florescer ou não.",
+            "Um único voo do pássaro é como uma distribuição de Bernoulli, enquanto o movimento de um bando de pássaros, cada um com seu próprio voo independente, é semelhante à distribuição binomial.",
+            "Como um único salto de um peixe representa a distribuição de Bernoulli, a contagem de todos os saltos dentro de um período de tempo imita a distribuição binomial.",
+            "A distribuição de Bernoulli é como o acender de uma única lâmpada, que pode brilhar ou não, enquanto a distribuição binomial é como acender várias lâmpadas, contando quantas brilham e quantas permanecem apagadas.",
+            "Como o grito solitário do tigre na noite representa a distribuição de Bernoulli, a cacofonia de sons na floresta, cada um um grito ou silêncio, reflete a distribuição binomial.",
+            "A distribuição binomial é como o agricultor que conta os frutos em sua árvore após um número definido de tentativas de cultivo, enquanto a distribuição de Poisson é como o sábio que observa as estrelas cadentes durante uma noite clara, sem saber quantas irão cruzar o céu.",
+            "Assim como um arqueiro que conta seus acertos após um número definido de flechas é a distribuição binomial, o guarda que conta os visitantes que passam pelo portão durante o dia retrata a distribuição de Poisson.",
+            "A distribuição binomial é como um pescador que julga seu sucesso pelo número de peixes capturados em suas tentativas de lançamento da rede, enquanto a distribuição de Poisson é como um observador contando os raios de uma tempestade elétrica durante a noite.",
+            "Como um eremita que lança pedras em um lago e conta quantas vezes acerta o alvo, assim é a distribuição binomial; mas contar o número de ondas que chegam à margem durante uma hora, isso é a distribuição de Poisson.",
+            "A distribuição binomial é como contar as flores que desabrocharam após plantar um número definido de sementes, enquanto a distribuição de Poisson é como contar os pássaros que passam voando durante um lindo dia de primavera.",
+            "Assim como a chuva cai de maneiras diferentes, mas sempre para o chão, todos os caminhos de dados, independentemente de sua origem, convergem para a forma da Distribuição Normal.",
+            "Como o bambu, que balança mas não quebra, a Distribuição Normal permanece firme em meio à variedade de amostras, demonstrando a sabedoria do Teorema Central do Limite.",
+            "O Teorema Central do Limite é como o sol que se levanta todos os dias: não importa como as estrelas se espalhem na noite, sempre haverá a luz da manhã.",
+            "A sabedoria do Teorema Central do Limite é como a água corrente: por mais que os seixos alterem seu curso, a água sempre busca o caminho do equilíbrio.",
+            "Por mais diversas que sejam as folhas de uma árvore, todas somam para formar a copa. Assim é o Teorema Central do Limite, unindo variáveis para revelar a beleza da Distribuição Normal.",
+            "Como o rio que sempre encontra seu caminho de volta ao mar, assim também as extremidades da vida retornam à média com o passar do tempo.",
+            "Grandes sucessos e falhas são como os picos das montanhas e os vales profundos: embora notáveis, eles voltam ao nível do solo com o tempo, como demonstrado pela regressão à média.",
+            "A regressão à média é como o equilíbrio do bambu: embora se curve com o vento, sempre retorna à sua posição vertical. Assim também, a vida tende ao equilíbrio, mesmo após os momentos de maior pressão.",
+            "A vida, como a regressão à média, ensina-nos que após a tempestade vem a calmaria. Tudo que sobe, eventualmente deve descer, e vice-versa.",
+            "Não se deslumbre com o brilho do ouro nem se assuste com o rugir do trovão, pois a Regressão à Média nos lembra que tanto o extraordinário quanto o terrível são passageiros e tendem ao equilíbrio com o tempo.",
+            "Assim como o rio muda seu curso quando encontra uma rocha, devemos mudar nosso caminho com a chegada de novas informações.",
+            "A mente intuitiva é como um cavalo selvagem, enquanto a lógica é o cavaleiro. O cavaleiro deve guiar o cavalo para o caminho correto.",
+            "Assim como a flor de lótus não pode florescer sem a luz do sol, a verdadeira compreensão não pode surgir sem o pleno entendimento do problema.",
+            "A simulação é como o ferreiro forjando uma espada: através de repetidas ações, uma forma clara e verdadeira surge.",
+            "O conhecimento é como um viajante que adiciona à sua bagagem em cada cidade que visita. Cada novo dado, cada nova informação, deve ser incorporada em nossa compreensão do mundo.",
+            "Assim como o sol e a lua seguem seus próprios caminhos sem interferir um no outro, assim também são os eventos independentes, cada um seguindo seu próprio caminho.",
+            "Como árvores em lados opostos de uma montanha, eventos independentes crescem e florescem, cada um sem conhecimento do outro.",
+            "O caminhar da tartaruga não afeta o voo do pássaro; assim são os eventos independentes, cada um avança sem perturbar o outro.",
+            "Como o sussurro do vento na floresta e o rugido das ondas no mar, eventos independentes acontecem ao mesmo tempo, mas não se influenciam.",
+            "Eventos independentes são como pedras lançadas em lados diferentes de um lago. Cada uma causa suas próprias ondulações, sem interferir nas ondulações da outra.",
+            "Como o dia e a noite que nunca se encontram, assim são os eventos mutuamente exclusivos, jamais ocorrendo ao mesmo tempo.",
+            "Eventos mutuamente exclusivos são como o caminho do tigre e do veado na floresta; quando um aparece, o outro desaparece.",
+            "Como a borboleta que não pode ser ao mesmo tempo crisálida, eventos mutuamente exclusivos não coexistem em um único momento.",
+            "Eventos mutuamente exclusivos são como o vento norte e o vento sul; nunca sopram juntos, sempre um após o outro.",
+            "Tal qual a flor de lótus que não floresce no inverno, eventos mutuamente exclusivos não se manifestam simultaneamente; um preenche o espaço deixado pelo outro.",
+            "Assim como o sol e a chuva podem ocorrer ao mesmo tempo para criar um arco-íris, eventos não mutuamente exclusivos podem coexistir e interagir.",
+            "Eventos não mutuamente exclusivos são como a melodia e a harmonia numa canção, ambas podem preencher o ar ao mesmo tempo, criando um todo mais rico.",
+            "Tal como os peixes que nadam juntos na mesma lagoa, os eventos não mutuamente exclusivos podem ocorrer simultaneamente, cada um trazendo sua própria contribuição.",
+            "Eventos não mutuamente exclusivos são como o Yin e Yang, distintos mas capazes de existir simultaneamente e juntos formam um todo equilibrado.",
+            "Assim como o lótus floresce enquanto suas folhas flutuam na água, eventos não mutuamente exclusivos podem se manifestar juntos, cada um com sua própria existência, mas ainda assim, interligados.",
+            "Como a flor que só floresce após a chuva, assim é a probabilidade condicional, dependente do que veio antes.",
+            "A probabilidade condicional é como o pescador que lança sua rede; a chance de pegar um peixe depende de onde e quando ele lança.",
+            "A probabilidade condicional é como a chama que precisa de oxigênio para brilhar; um evento depende da ocorrência de outro.",
+            "Assim como a direção do vento afeta o voo do pássaro, a probabilidade condicional muda com a ocorrência de outros eventos.",
+            "Como a semente que só brota na primavera, a probabilidade condicional depende das condições que a precedem para florescer.",
+            "As medidas de tendência central são como o coração do bambu, indicando o ponto central de seu crescimento, enquanto as medidas de dispersão são como seus galhos, mostrando até onde pode se estender.",
+            "O ponto de encontro no centro da vila retrata as medidas de tendência central, enquanto a distância que cada aldeão viaja para chegar a esse ponto representa as medidas de dispersão.",
+            "As medidas de tendência central são como o ponto onde o sábio se senta para meditar, enquanto as medidas de dispersão são como os ecos de sua sabedoria que se espalham por toda a montanha.",
+            "A pedra no centro do lago reflete as medidas de tendência central, enquanto as ondulações que se propagam para longe dela retratam as medidas de dispersão.",
+            "As medidas de tendência central são como o sol no céu ao meio-dia, um ponto ao qual todos olham, enquanto as medidas de dispersão são como as sombras que se estendem em todas as direções, mostrando o alcance da luz.",
+            "A média é como a água em um lago, que pode ser perturbada pela menor pedra ou pela maior rocha, enquanto a mediana é como a montanha, inabalável diante do vento mais leve ou da tempestade mais forte.",
+            "A média é como o vento que muda de direção com cada brisa suave ou tempestade feroz, enquanto a mediana é como o carvalho resistente, que permanece firme, não importa a força do vento.",
+            "A média é como o curso de um rio, alterado por cada pequena pedra e cada grande rocha em seu caminho, enquanto a mediana é como a ponte que atravessa o rio, constante e estável.",
+            "A média é como a chama de uma vela, que dança ao sopro de cada vento, enquanto a mediana é como o pavio, que queima a uma taxa constante.",
+            "A média é como um espelho d'água, que reflete tanto a pequena folha que cai quanto o grande ramo que cai, enquanto a mediana é como a pedra no fundo do lago, imutável diante do menor ou do maior impacto na superfície.",
+            "O desvio padrão é como o balanço do pêndulo, medindo a variação regular dentro do ritmo constante, enquanto a amplitude é como a distância entre o mais alto e o mais baixo alcance do pêndulo.",
+            "O desvio padrão é como o trilho sinuoso da montanha, refletindo as pequenas variações no terreno, enquanto a amplitude é como a altura total da montanha, do vale ao pico.",
+            "A amplitude é como o vôo do pássaro, do solo ao céu, representando o extremo de sua ascensão, enquanto o desvio padrão é como o bater de suas asas, variando sutilmente com cada batida.",
+            "O desvio padrão é como o caminho tortuoso do rio, observando as pequenas curvas e voltas, enquanto a amplitude é a distância direta da nascente à foz.",
+            "O desvio padrão é como a melodia de uma canção, notando a variação de cada nota, enquanto a amplitude é a diferença entre a nota mais alta e a nota mais baixa.",
+            "A análise exploratória de dados é como navegar um rio, não se pode compreender sua correnteza sem primeiro explorar suas águas.",
+            "Da mesma forma que o jardineiro observa cuidadosamente a terra antes de plantar, o pesquisador deve explorar os dados antes de aplicar seus modelos.",
+            "Como o pescador que observa o mar antes de lançar sua rede, assim deve ser o cientista com seus dados.",
+            "Análise exploratória de dados é como desenhar um mapa do tesouro, guiando-nos por terrenos desconhecidos e revelando onde as riquezas estão escondidas.",
+            "Como o mestre de chá que prova antes de servir, o analista de dados explora antes de concluir.",
+            "Analisar dados sem explorá-los primeiro é como tentar prever o clima sem olhar para o céu.",
+            "A análise exploratória de dados é como o vento que encontra todas as folhas na floresta - nenhum aspecto dos dados deve ficar sem ser tocado.",
+            "Assim como o viajante que percorre uma nova cidade, o cientista de dados deve explorar todos os cantos dos dados antes de chegar a uma conclusão.",
+            "A análise exploratória de dados é como um artesão meticuloso, atento a cada detalhe, cada textura e cada padrão.",
+            "Assim como o mestre de xadrez estuda o tabuleiro antes de fazer seu movimento, o pesquisador deve estudar seus dados antes de testar sua hipótese.",
+            "O gráfico box-plot é como um sábio mudo, dizendo muito sem pronunciar uma única palavra, mas suas mensagens podem ser ignoradas por aqueles que não sabem como ouvir.",
+            "O box-plot é um espelho do lago, refletindo tanto o dragão do outlier quanto o peixe comum da distribuição central, mas pode deixar os detalhes das ondas não detectados.",
+            "Assim como um punhado de arroz pode dar uma medida da colheita, um box-plot pode fornecer uma visão concisa dos dados, mas não pode descrever o gosto de cada grão.",
+            "Um gráfico box-plot é como um pergaminho bem enrolado, contendo muita informação em um espaço pequeno, mas escondendo as nuances sutis na caligrafia.",
+            "O gráfico box-plot é como um monge contemplativo, ele considera silenciosamente o máximo, o mínimo, a mediana e os quartis, mas ignora a melodia dos dados que não se enquadram nessas categorias.",
+            "O histograma é como a cordilheira de uma montanha, exibindo a distribuição de seus vales e picos, mostrando onde a maioria reside e onde a minoria se esconde.",
+            "Como o rastro deixado por um antigo carrinho de mão, um histograma mostra a frequência de suas viagens, revelando os caminhos mais frequentemente percorridos pelos dados.",
+            "O histograma é como o campo de arroz dividido em quadrados, cada quadrado conta a história da abundância ou da falta, e juntos eles formam a história da colheita.",
+            "Como um livro aberto, um histograma compartilha as histórias de frequências, permitindo-nos ler a saga dos dados, a partir das páginas de seus intervalos.",
+            "O histograma é como a constelação no céu noturno, cada barra uma estrela, seu tamanho e posição revelando a densidade de eventos, desenhando o retrato da totalidade dos dados.",
+            "Um gráfico de dispersão é como uma dança de folhas ao vento, cada folha pairando no espaço, mostrando a harmonia ou o desacordo entre duas brisas.",
+            "Como duas aves voando juntas no céu, o gráfico de dispersão mostra a ligação entre elas, se elas voam em uníssono ou seguem caminhos diferentes.",
+            "O gráfico de dispersão é como pedras atiradas em um lago, onde cada pedra cai conta uma história, mas só observando o lago inteiro podemos entender a sinfonia completa.",
+            "Como o tecelão entrelaça fios de lã, um gráfico de dispersão entrelaça variáveis, tornando visível a trama e a urdidura de suas relações.",
+            "O gráfico de dispersão é como um jardim onde crescem duas espécies de flores; apenas ao vê-las lado a lado podemos discernir se elas florescem juntas ou à parte."
+        ];
+
+        const chineseEmojis = ['🏮', '🐉', '🧧', '🎋', '☯️', '🏯', '🗻', '🎎', '🐼', '🐅', '📜'];
+
+        const generateBtn = document.getElementById("generate");
+        const phraseElem = document.getElementById("phrase");
+        const emojiElem = document.getElementById("chinese-emoji");
+        const phraseContainer = document.getElementById("phrase-container");
+        let hasShownProverb = false;
+        
+        // Inicialização - definir a mensagem inicial e estilo
+        phraseElem.textContent = "Toque no botão para revelar um provérbio chinês!";
+        phraseElem.classList.add("show");
+        
+        function getRandomEmoji() {
+            const randomIndex = Math.floor(Math.random() * chineseEmojis.length);
+            return chineseEmojis[randomIndex];
+        }
+        
+        function getRandomPhrase() {
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            return phrases[randomIndex];
+        }
+        
+        generateBtn.addEventListener("click", () => {
+            // Desabilitar o botão durante a animação
+            generateBtn.disabled = true;
+            
+            // Animar o emoji
+            emojiElem.classList.add("shake");
+            
+            // Esconder a frase atual
+            phraseElem.classList.remove("show");
+            
+            // Temporizador para mostrar a nova frase após a animação
+            setTimeout(() => {
+                // Selecionar novo emoji e frase aleatórios
+                const newEmoji = getRandomEmoji();
+                const newPhrase = getRandomPhrase();
+                
+                // Atualizar emoji
+                emojiElem.textContent = newEmoji;
+                emojiElem.classList.remove("shake");
+                
+                // Atualizar o texto da frase
+                phraseElem.textContent = newPhrase;
+                
+                // Revelar a frase
+                phraseContainer.classList.add("revealed");
+                phraseElem.classList.add("show");
+                
+                // Mudar o texto do botão após o primeiro uso
+                if (!hasShownProverb) {
+                    generateBtn.textContent = "Outro Provérbio";
+                    hasShownProverb = true;
+                }
+                
+                // Reativar o botão
+                generateBtn.disabled = false;
+            }, 600);
+        });
+        
+        // Prevenir zoom em dispositivos iOS ao dar double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
